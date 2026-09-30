@@ -4,7 +4,7 @@ Tudo o que o JP sabe sobre geração de imagem e vídeo com IA, num lugar só: H
 
 Este documento é vivo. Quando entrar material novo (aula, teste, post, projeto), ele vai para `fontes/` e o aprendizado vem para cá, na seção certa.
 
-> Última atualização: 2026-09-26 · fontes na [seção 17](#17-fontes)
+> Última atualização: 2026-09-26 (dados da CLI conferidos na conta) · fontes na [seção 17](#17-fontes)
 
 ## Sumário
 
@@ -44,6 +44,10 @@ Se só der tempo de ler uma seção, é esta. Cada lei tem a origem entre parên
 10. **Imagem é barata, vídeo é caro.** Itere no frame até ele estar certo. Só depois gaste crédito de vídeo. (Dreamina/BORA)
 11. **Comece pelo clipe mais difícil.** Se ele funcionar, o método está validado para o resto. (Dreamina/BORA)
 12. **Direção de verdade, não resumo.** Nada de "ela fica triste" ou "ele dança". Escreva o gesto: "os olhos caem para a mesa, o maxilar trava, ela engole uma vez". Dança é escrita passo a passo, senão sai um balançar genérico. (Skill shotlist, Higgsfield)
+13. **Editorial de moda, não "cinematic" genérico.** Toda imagem começa por uma decisão forte: ângulo extremo, luz dura e real, styling com paleta desenhada em volta do produto, algo em primeiro plano cortado pela borda. Bar à meia-luz com lâmpada de filamento, plano médio centralizado e brilho de propaganda são a cara da IA. (Human Academy, [11.4](#114-o-que-os-resultados-do-curso-fazem-e-a-primeira-heineken-não-fez))
+14. **Não embeleze.** "Do not automatically brighten, beautify or restyle the scene." Distorção de lente, sombra dura, grão e fundo imperfeito fazem parecer foto de verdade. No vídeo, deixe a referência carregar o look em vez de descrevê-lo. (Human Academy, [11.5](#115-prompt-de-cobertura-de-vídeo-a-outra-metade-do-método))
+15. **Marca nunca é gerada.** Rótulo, logo e tampinha vêm de **foto real do produto colada por código** (stills) ou de tracking na pós (vídeo). Nem a folha de produto "fiel" do GPT serve: ela interpreta a tipografia. Modelo de imagem e de vídeo embaralha letra de marca, principalmente em objeto pequeno e em movimento. (Heineken, [14.5](#145-heineken-ultimate-com-o-jp-set2026-em-andamento))
+16. **Movimento se ensaia antes, em argila.** Com o still herói aprovado, o filme é montado em 3D simples no Blender (medidas reais, câmera com massa, física, tempo de cada plano) e vira um vídeo de argila que entra no Seedance como referência de movimento, junto com o still. Ajustar câmera e tempo no previs custa zero crédito. (Human Academy, [11.6](#116-previs-no-blender-hero-frame--argila--seedance))
 
 ---
 
@@ -60,13 +64,15 @@ Se só der tempo de ler uma seção, é esta. Cada lei tem a origem entre parên
 
 | Modelo (nome na CLI) | Melhor uso | Limites úteis |
 |---|---|---|
-| GPT Image 2.5 (`gpt_image_2_5`) | Padrão recomendado pela Higgsfield. Folha de produto, edição, mapa esquemático, texto na imagem | `--quality high`, `--resolution 2k` |
+| GPT Image 2.5 (`gpt_image_2_5`) | Padrão recomendado pela Higgsfield. Folha de produto, edição, mapa esquemático, texto na imagem. **Melhor modelo para stills no estilo editorial do curso com pessoa real** (teste de 2026-09-26, seção 14.5) | `--quality high`, `--resolution 2k` |
 | GPT Image 2 (`gpt_image_2`) | O que a Higgsfield usou para folhas de produto, edições e mapas no tutorial dos fones | |
 | Soul Cinematic (`soul_cinematic`) e Soul V2 (`text2image_soul_v2`) | Personagem fotorreal ("Soul Cinema"). Aceita **Soul ID** (rosto treinado) | 1 referência só, 1.5k ou 2k |
 | Soul Location (`soul_location`) | Locação fotorreal ("Cinematic Locations") | Aceita 21:9 e 9:21 |
 | Cinematic Studio 2.5 (`cinematic_studio_2_5`) | Still de cinema com muitas referências | Até 14 referências, 1k/2k/4k, aceita 21:9 |
 | Seedream 4.5 (`seedream_v4_5`) | Frames em série com referências | Até 14 referências, aceita 21:9 |
-| Seedream V5 Lite (`seedream_v5_lite`) | O "Seedream 5.0" que o curso usa. Raciocina e pode buscar na web antes de gerar | Na CLI: 1:1, 4:3, 3:4, 16:9, 9:16 (sem 21:9). `--quality basic` ou `high` |
+| Seedream 5.0 Lite (`seedream_v5_lite`) | O "Seedream 5.0" que o curso usa. Raciocina e pode buscar na web antes de gerar | 1:1, 4:3, 3:4, 16:9, 9:16 e 21:9. `--quality basic` ou `high` (o "2K" do curso é o `high`). 1 crédito por imagem |
+| **Seedream 5.0 Pro** (`seedream_v5_pro`) | Folha de personagem a partir de fotos reais, edição de folha (apagar rosto, trocar roupa) | Até 10 referências, `--resolution 1k/1.5k/2k` (sem `--quality`), aceita 21:9. 2,5 créditos em 2K, 1,25 em 1K |
+| Seedream 5.0 Flash (`seedream_5_0_flash`) | Versão rápida do Seedream 5 | |
 | Nano Banana Pro (`nano_banana_2`) | Geração e edição em 2k | |
 | Flux Kontext (`flux_kontext`) | Edição por instrução ("troque a cor da camisa") | |
 | Outpaint (`outpaint`) | Estender uma imagem para os lados (vira ultra wide) | |
@@ -75,7 +81,7 @@ Se só der tempo de ler uma seção, é esta. Cada lei tem a origem entre parên
 
 | Modelo (nome na CLI) | Duração | Referências | Destaques |
 |---|---|---|---|
-| **Seedance 2.5** (`seedance_2_5`) | até **30 s** | até **50** (imagem, vídeo e áudio) | Vários planos numa geração só, 1080p nativo, qualquer proporção de 9:16 a 21:9, áudio (ambiente, foley e trilha) no mesmo passe, **region edit** (corrige só um pedaço sem refazer o clipe). É o padrão atual da Higgsfield para vídeo |
+| **Seedance 2.5** (`seedance_2_5`) | até **30 s** | até **50** (imagem, vídeo e áudio) | Vários planos numa geração só, 1080p nativo, proporções de 9:16 a 21:9, áudio (ambiente, foley e trilha) no mesmo passe, **region edit** (corrige só um pedaço sem refazer o clipe). Até 30 imagens dentro das 50 referências. Modos: `t2v`, `omni_reference`, `video_edit`, `video_extension` (ver [10.2](#102-higgsfield-cli)). É o padrão atual da Higgsfield para vídeo |
 | **Seedance 2.0** (`seedance_2_0`) | até 15 s (a skill mira 15 s) | até 9 imagens + 3 vídeos + 3 áudios, 12 no total | 480p a 4K, `--genre`, áudio nativo. Modo `fast` só vai até 720p |
 | Seedance 2.0 Mini | curto | igual ao 2.0 | Mais barato, até 720p |
 | Cinematic Studio Video 3.5 (`cinematic_studio_video_3_5`) | 15 s padrão | até 15 | Presets de estilo (câmera, luz, cor) e multi-shot por parâmetro (ver [7.5](#75-presets-do-cinematic-studio-35)) |
@@ -160,6 +166,14 @@ Existem dois modelos, e eles servem a coisas diferentes.
 
 Prompt completo pronto: [exemplos/character-sheet-street-girl.md](exemplos/character-sheet-street-girl.md).
 
+**Formato padrão do JP (o que usamos para personagem real):** junta os dois modelos.
+
+- **Fileira de cima, cabeça em 4 ângulos:** frente, 3/4, perfil, nuca. Expressão neutra, boca fechada, 85 mm, com espaço acima do cabelo. É a única fileira com rosto.
+- **Fileira de baixo, corpo em 4 ângulos sem cabeça:** frente, 3/4, perfil, costas.
+- **Nunca peça para o modelo "cortar no pescoço".** Ele espreme o corpo para caber (tronco curto, braço comprido) e o vídeo copia a proporção errada. O certo: gerar os corpos inteiros, com cabeça e proporção descrita em número ("about 7.5 heads tall, fingertips at mid-thigh"), e **tirar a cabeça por código** (pintar acima do pescoço com o cinza do fundo). Nenhum modelo toca nessa etapa, então não há alucinação.
+- Referências: fotos reais só para o rosto (a frontal neutra tipo documento é a mais forte; a de perfil segura o nariz e o maxilar) e a folha anterior "ONLY for the outfit".
+- Prompts e script em `Downloads/character-sheet-jp/` (`prompt_sheet_v2.txt`, `prompt_bodies_v3.txt`).
+
 **Variações:**
 
 - **Figurino novo**: edite a folha existente, mantendo rosto e identidade. `Edit this character sheet so he's wearing a blue athletic outfit, with these sneakers (@sneakers).`
@@ -175,7 +189,7 @@ Prompt completo pronto: [exemplos/character-sheet-street-girl.md](exemplos/chara
   `THE FOREGROUND & ROOF` · `THE TRACK` · `THE FIELD` · `THE BACKDROP` · `THE LIGHT & SKY` · `COLOR GRADE` · `CAMERA & LENS` · fecho com "photorealistic, 16:9, no on-screen text, no visible brand logos, no crowd".
 - **Luz coerente com o lugar**: metrô subterrâneo tem só fluorescente fria. Sem essa frase, saiu com sol.
 - **Versão A e versão B** (problema e solução) com a mesma câmera e a mesma arquitetura, quando o filme compara antes e depois.
-- **Ultra wide** para establishing (estabelecer escala). Prompt completo: [exemplos/cidade-engolida-ultrawide.md](exemplos/cidade-engolida-ultrawide.md). Atenção: Seedream V5 Lite não tem 21:9 na CLI; use Soul Location, Cinematic Studio 2.5 ou Seedream 4.5, ou gere em 16:9 e estenda com Outpaint.
+- **Ultra wide** para establishing (estabelecer escala). Prompt completo: [exemplos/cidade-engolida-ultrawide.md](exemplos/cidade-engolida-ultrawide.md). Seedream 5.0 Lite, Soul Location, Cinematic Studio 2.5 e Seedream 4.5 aceitam 21:9. Para panorama ainda mais largo, estenda com Outpaint.
 
 ### 4.5 Objetos de cena (props)
 
@@ -244,6 +258,7 @@ She/He wears [peça 1 com cor, material e modelagem], [peça 2], [calçado], [bo
 - **Um frame por detalhe crítico.** Se o que importa é o cartão encostando na seta do validador, o frame é esse plano fechado. A pessoa entra depois pela referência.
 - **Respiro em cima e embaixo** (pelo menos ~150 px no 4:5) quando a peça vai ser recortada em 4:5, 1:1 e story.
 - **Telas e textos ficam desfocados de propósito.** Tela de celular sai ilegível e a interface real entra na edição, por cima (caso de um anúncio de app). Reserve área livre para marca e preço.
+- **Exceção que funcionou: tela grande de produto como referência** (totem BORA, set/2026). No Seedream 5 Pro, com o PNG da interface como última referência e o texto dela citado entre aspas no prompt, a tela saiu legível e fiel, com tipografia grossa e poucas palavras. Pacote de referências usado: locação aprovada, product sheet, foto do produto, character sheet, dois rostos, **esquema de perfil em escala** (balcão, totem, pessoa, distância da mão e do celular em cm, gerado por código) e a tela. O esquema resolveu a mão e o celular "retos para o sensor", que por texto e por edição da locação saíam errados. A composição por código continua como plano B se o texto derivar no vídeo.
 
 ---
 
@@ -536,6 +551,7 @@ Cada **momento** (uma ação que o público precisa ver) pede cerca de **2 a 3 s
 - **Som que conta a história**: o grito do chefe corta para quase silêncio no instante em que os fones vedam.
 - **Lista de SFX** no fim de prompts de ação (`SFX: ice creak stress, deep glacier cracking...`).
 - **O que não pode ter**: "No music, no narration, no subtitles", "no discernible dialogue".
+- **Voz real como referência (`--audio` no Seedance 2.5)**: o modelo usa a gravação, mas **recorta e muda os pedaços de lugar no tempo** para caber no vídeo que ele planejou: começou 0,25 s antes, criou uma pausa, terminou 0,7 s depois. Em janelas de 0,2 s cada pedaço bate 92% a 95% com o arquivo, mas a trilha inteira bate só 13% a 16%, porque os pedaços andaram. Soa "gago" nas emendas. A boca sincroniza com essa versão recortada, então trocar pelo MP3 original na edição quebra a sincronia. Escrever a fala com o segundo de cada frase ajuda, mas não trava o tempo, e reforçar "use the attached audio exactly as recorded" também não resolveu (três testes; no terceiro o prompt pedia com todas as letras para não cortar, mover nem repetir pedaço nenhum, e os pedaços andaram até 1 s). **Solução que funcionou:** usar o áudio que o modelo devolve só como guia, alinhar com a gravação original (DTW, alinhamento dinâmico sobre espectro mel) e reajustar o tempo do **vídeo** (repetir ou pular um quadro isolado) para a boca bater no áudio original, que entra copiado sem recodificar. Esticar o áudio em vez do vídeo também deixa a voz "gaga". Script: `bora-apresentacao-jp/sincroniza_video.py`. (Vídeo de apresentação do JP, 2026-09-27)
 
 ---
 
@@ -560,6 +576,20 @@ npm install -g @higgsfield/cli
 ```bash
 higgsfield auth login
 ```
+
+Depois do login, escolha o workspace de cobrança (sem isso, `account status` e as gerações dão "No workspace selected"):
+
+```bash
+higgsfield workspace list
+```
+
+```bash
+higgsfield workspace set <workspace_id>
+```
+
+A CLI também responde por `hf` e `higgs`. Testado na versão 1.1.26 (build de 2026-09-18).
+
+**CLI ou MCP?** A Higgsfield tem um servidor MCP (`https://mcp.higgsfield.ai/mcp`), que entra como conector personalizado no claude.ai e no Claude Desktop (Configurações → Conectores). Para o Claude Code, a recomendação oficial é a CLI, que o próprio agente usa pelo terminal.
 
 Descobrir modelos e parâmetros (sempre rode antes de usar um modelo novo, é o esquema ao vivo):
 
@@ -591,12 +621,30 @@ Detalhes que economizam tempo:
 - `--image`, `--start-image`, `--end-image`, `--video`, `--audio` aceitam **caminho local** (sobe sozinho) ou **id** de upload ou de um job anterior. Dá para encadear: a saída de uma geração vira a entrada da próxima.
 - `--aspect_ratio` e `--aspect-ratio` são a mesma coisa.
 - No Seedance 2.0, `--mode fast` só vai até 720p; para 1080p ou 4K use `std`.
+- A documentação do GitHub (MODELS.md) fica desatualizada. Vale o que `higgsfield model get <modelo>` mostra.
+
+**Os modos do Seedance 2.5** (conferido com `model get` em 2026-09-26):
+
+| Modo | Para quê | Regra |
+|---|---|---|
+| `t2v` (padrão) | Só texto | Não aceita nenhuma mídia de referência |
+| `omni_reference` | Imagem de partida e/ou referências (personagem, produto, locação, áudio) | Exige pelo menos uma referência. É o único modo que aceita `--start-image` e `--end-image` |
+| `video_edit` | Editar um vídeo existente | Exatamente um vídeo de referência |
+| `video_extension` | Estender um vídeo para frente ou para trás | Pelo menos um vídeo, mais `--extension_mode forward` ou `backward` |
+
+Limites: até 50 referências no total, até 30 imagens (contando início e fim), resolução 480p, 720p ou 1080p, `--generate_audio` ligado por padrão.
 - `--end-image` exige `--start-image`.
 
 Exemplos:
 
 ```bash
 higgsfield generate create seedance_2_5 --prompt "drone shot over a mountain valley at sunrise" --aspect_ratio 16:9 --duration 5 --resolution 1080p --mode t2v --bitrate_mode high --wait
+```
+
+Animar uma imagem (imagem de partida + referências):
+
+```bash
+higgsfield generate create seedance_2_5 --mode omni_reference --prompt "$(cat cena.txt)" --start-image ./frame01.png --image ./refs/girl_sheet.png --aspect_ratio 16:9 --duration 15 --resolution 1080p --wait
 ```
 
 ```bash
@@ -691,6 +739,83 @@ O curso ensina o mesmo pipeline da [seção 3](#3-o-pipeline-de-produção), com
 
 O curso não escreve prompt final à mão. Ele escreve **meta-prompts em português** (o que o asset precisa ter e que sensação passar) e deixa a IA transformar em prompt técnico em inglês. Essa é a divisão de trabalho que vale copiar: **o humano decide intenção, contraste e emoção; a IA escreve a especificação.**
 
+### 11.4 O que os resultados do curso fazem (e a primeira Heineken não fez)
+
+Comparação feita em 2026-09-26 entre os resultados do curso gerados no ChatGPT ([fontes/human-academy-imagens/](fontes/human-academy-imagens/)) e os primeiros stills da Heineken, reprovados pelo JP.
+
+| Decisão | Curso (maçã verde, ChatGPT) | Heineken v1 (reprovada) |
+|---|---|---|
+| Primeira decisão do plano | Ângulo extremo: worm's eye 24 mm, olho de peixe de baixo para cima | Plano médio na altura do peito, 50 mm |
+| Luz | Sol duro com céu cobalto, ou contraluz de fim de tarde com rim | Âmbar de bar com lâmpadas de filamento (clichê de banco de imagem e de IA) |
+| Styling | Figurino com conceito e paleta desenhada em volta do produto: boné verde, crocs menta com pins de maçã, pêssego e lilás | Camiseta branca e jeans "padrão" |
+| Produto | Vira parte do styling (os pins de maçã no calçado) | Só na mão |
+| Composição | Assimétrica, perspectiva forçada (joelhos enormes em primeiro plano), coisas cortadas pela borda | Sujeito centralizado, fundo desfocado genérico |
+| Textura | Distorção de lente, sombra dura, grão, fundo de papel com queda de luz: parece foto de verdade | Limpo, bonito, brilhante |
+| Linguagem | Editorial de moda jovem, fotógrafo com a câmera na mão | "Cinematic commercial" genérico |
+| Character sheet | Vistas + expressões que o filme vai usar, layout livre de lookbook em estúdio real | Grade rígida e estéril |
+| Modelo | ChatGPT (GPT Image) | Seedream 5.0 Pro |
+
+**A lição:** no curso, "cinematic editorial photograph" quer dizer foto editorial de moda com decisões fortes, não cinema de bar à meia-luz. Antes de escrever qualquer prompt de still, decidir e escrever nesta ordem:
+
+1. o ângulo extremo e a lente (worm's eye, olho de peixe, top-down, tele comprimido);
+2. a luz dura e real (sol, flash, contraluz), sem "moody" genérico;
+3. a paleta e o styling desenhados em volta do produto (cor, acessório, objeto que ecoa a marca);
+4. o que fica em primeiro plano cortado pela borda (joelho, folha, garrafa, mão);
+5. a textura real: distorção, grão, sombra dura, "do not beautify".
+
+### 11.5 Prompt de cobertura de vídeo (a outra metade do método)
+
+O prompt 6 de [fontes/human-academy-curso.md](fontes/human-academy-curso.md) gera 10 s de planos novos a partir de um vídeo de referência. O que ele ensina:
+
+- **A referência carrega o look, o texto dá as regras.** "Infer them directly from the reference; do not require a written description." Nada de descrever luz e cor de novo: o modelo observa e trata como regra de continuidade.
+- **Guarda-corpo anti-IA:** "Do not automatically brighten, beautify or restyle the scene." Vale para qualquer prompt de vídeo.
+- **Fórmula de montagem para 10 s:** um ângulo novo segurado por ~2 s, uma rajada de 3 a 4 inserts rápidos de ação, um plano lateral sustentado, outra rajada de inserts e um plano aberto de fechamento. Em resumo: alternar planos longos em movimento com rajadas de cortes.
+- **Câmera motivada pelo gesto:** tracking suave, push-in, pullback, low e high angle, arcos curtos. "Let the camera follow the subjects' gestures."
+- **Cortes de verdade:** "Use real hard cuts between distinct shots. Do not morph one angle into another."
+- **Imagens extras só informam:** "use them to understand appearance, photography and the location. Do not reproduce them as static shots."
+- **Consequência para o pipeline:** primeiro acertar um still (ou um primeiro clipe) com a estética certa; depois gerar a cobertura a partir dele. Na CLI, o clipe entra como `--video` no modo `omni_reference` do Seedance 2.5.
+- **Demonstração de produto não é comercial dinâmico** (totem BORA, set/2026). Na demo, o que importa é entender o processo. Por isso, câmera travada em tripé, ações em tempo real e cada estado de tela por pelo menos ~1 s depois de montado. Nada de rajada de inserts, chicote ou rampa de velocidade. Do método do curso ficam só a continuidade de look e as proibições. Câmera travada ainda permite colar a interface real por cima na pós, se o modelo embaralhar texto.
+- **Quando usar cada formato:** o do curso (curto, confia na referência) quando já existe um still ou clipe forte; o da Higgsfield (seções longas, [6.3](#63-formato-seedance-25-seções-rotuladas-até-30-s)) quando é preciso construir do zero com muitos elementos e efeitos.
+
+### 11.6 Previs no Blender (hero frame → argila → Seedance)
+
+Prompt completo em [fontes/human-academy-curso.md](fontes/human-academy-curso.md#8-previs-no-blender-hero-frame--animação-em-argila--seedance-25) (PDF original na mesma pasta). A ideia: o still herói define a aparência; o Blender define **câmera, composição, blocking, tempo, relações espaciais e trajetórias**, nessa ordem de prioridade. Detalhe visual não importa.
+
+**Regras de construção:** formas primitivas, manequim simples, material de argila neutro e fosco, sem textura, logo ou texto, objetos separados e nomeados, tudo editável. A câmera é o objeto mais importante e começa **batendo com o enquadramento do still herói**.
+
+**Para cada plano, definir:** posição inicial e final da câmera, altura, lente, alvo, trajeto, aceleração e desaceleração, enquadramento nos beats, oclusão de primeiro plano e paralaxe. Para cada beat de ação: posição inicial e final, movimento, interação, direção de tela e relação com a câmera. Truques simples de animação valem quando comunicam melhor.
+
+**Passe de realismo físico** (o coração do prompt), olhando como diretor de fotografia, operador, dublê e animador de física:
+
+1. **Câmera operada:** escolher o equipamento real (mão, ombro, steadicam/gimbal, dolly, grua, slider, veículo, drone, braço robótico) e reconstruir o movimento com a física dele. Massa e inércia: nunca começar, parar, virar, subir ou girar instantaneamente. Todo movimento tem **antecipação → aceleração → deslocamento → desaceleração → assentamento**. Nada de ease in/out genérico nem curva simétrica.
+2. **Tirar a cara de câmera 3D:** imperfeições sutis **com causa física** (respiração do operador na câmera na mão, inércia residual no gimbal, dolly quase perfeito, arco do braço na grua, inclinação no drone). Nunca tremor aleatório.
+3. **Pan, tilt e rotação:** rotação e translação acopladas; ao seguir alguém, a câmera reage com um pequeno atraso humano; pequenas correções; em reenquadramento rápido, passada e correção.
+4. **Lente e paralaxe:** não usar zoom para fingir movimento; paralaxe coerente com distância, lente, velocidade e escala.
+5. **Física de personagem e objeto:** massa, gravidade, momento, atrito, contato, equilíbrio, inércia, arrasto, colisão, follow-through. Movimento nasce do centro de massa; pé sem deslizar; cabeça fora de sincronia com o tronco.
+6. **Peso:** objeto pesado acelera e para devagar; leve sofre resistência do ar. Nunca o mesmo perfil de easing para tudo.
+7. **Gravidade e queda:** arco balístico; queda nunca linear; depois do impacto, quique, compressão, deslize, rotação, atrito, assentamento.
+8. **Contato:** sem penetração, flutuação ou vão; contato gera reação.
+9. **Movimento secundário:** só o que segue a força principal (estabilização do corpo, atraso de cabelo e tecido, vibração depois do impacto).
+10. **Tempo:** revisar em velocidade real; corrigir onde "moveu rápido demais", "parou perfeito demais", "parece sem peso", "parece animado".
+11. **Não suavizar demais:** movimento real tem mudança de intenção, micro-correção, impacto, hesitação. Tirar a perfeição matemática sem colocar ruído.
+12. e 13. **Checagem final** da câmera (um equipamento real faria isso? o operador antecipa a ação?) e da ação (onde está o peso? que força começa e que força para o movimento?).
+14. **Entrega:** playblast completo, gráfico de velocidade da câmera, curvas de animação da câmera, frames em 0, 25, 50, 75 e 100%. Não seguir para a geração final enquanto o movimento parecer animação de Blender.
+
+**Como fizemos na prática (Heineken, set/2026)** · pasta `Downloads/heineken-ultimate/06_previs/`:
+
+- **Tudo por script Python do Blender (`previs_build.py`)**, rodando sem tela: `blender --factory-startup -b -P previs_build.py -- --teste 30,168` renderiza frames soltos, e `-- --full` renderiza tudo. O Claude Code monta e itera sozinho; o `.blend` salvo continua editável.
+- **Manequim com armature e IK:** as mãos seguem alvos (empties), e a garrafa é filha do alvo da mão direita. A cabeça é um objeto com Damped Track para um alvo de olhar, e o nariz mostra para onde ele olha. Olhos, sobrancelhas e boca animados deixam ler desconfiança e sorriso de canto.
+- **Física calculada no script:** braço com perfil de jerk mínimo assimétrico, com antecipação e assentamento (é como a mão humana se move). A tampinha sobe como mola amortecida até 12 cm acima do gargalo e, no TUM, cai com gravidade até a palma, com quique curto. O olhar segue a tampinha com atraso de pescoço (mola), e as câmeras miram com atraso de operador (mola com massa por tipo de equipamento).
+- **Um plano por câmera**, trocando por marcadores de corte na timeline. Render em Cycles na GPU (RTX 4060, OptiX), argila, 1280x720, 24 fps, motion blur de 180°.
+- **Medidas reais** travam a escala: long neck de 23 × 6 cm, tampinha de 3,2 cm, cadeira de 45 cm.
+- **Armadilhas:**
+  - Os marcadores de corte trocam a câmera sozinhos: para renders de depuração, desligar os marcadores.
+  - A "mão" em cápsula passava da garrafa e tapava os inserts: usar esfera no ponto da pegada.
+  - Olho de peixe equisolid de 14 mm deixa cantos pretos em 16:9, e o de 15 mm fecha o quadro.
+  - Para os tênis entrarem embaixo e a tampinha em cima, a câmera herói inclina só uns 18° para cima, não 40°.
+  - Os add-ons do usuário quebram o modo sem tela: usar `--factory-startup`.
+- **Entrada no Seedance 2.5:** o vídeo de argila vai como `--video` (referência de movimento), junto com o still herói, as folhas de personagem e de produto (`--mode omni_reference`). O prompt pede para copiar só câmera, blocking e tempo do vídeo de argila e toda a aparência das imagens.
+
 ---
 
 ## 12. Economia de crédito e checklist antes de gerar
@@ -702,7 +827,23 @@ O curso não escreve prompt final à mão. Ele escreve **meta-prompts em portugu
 - Teste em resolução menor (480p ou 720p, modo fast) e só renderize em 1080p ou 4K o que já funcionou.
 - Quando falhar, **diagnostique por segundo**: "o segundo 1 errou o cartão, do segundo 2 em diante está ótimo". Corrija só o trecho, de preferência no frame.
 - No 2.5, use region edit antes de refazer tudo.
-- Use `higgsfield generate cost` quando disponível e confira o saldo com `higgsfield account`.
+- Estime antes com `higgsfield generate cost <modelo> <mesmos flags>` (não gasta nada) e confira o saldo com `higgsfield account status`.
+
+**Tabela de custo** (conta Plus do JP, consultada em 2026-09-26):
+
+| Geração | Créditos |
+|---|---|
+| Seedance 2.5, 480p | 3 por segundo (15 s = 45) |
+| Seedance 2.5, 720p | 7 por segundo (15 s = 105) |
+| Seedance 2.5, 1080p | 12 por segundo (15 s = 180, 30 s = 360) |
+| Seedream 5.0 Lite, basic ou high | 1 por imagem |
+| Seedream 5.0 Pro | 2,5 em 2K, 1,25 em 1K (referências não mudam o preço) |
+| Nano Banana Pro (`nano_banana_2`) | 2 em 2K |
+| GPT Image 2.5, qualidade alta, 2K | 2,75 (média: 1) |
+| Soul Location | 0,12 |
+| Reframe de vídeo, 15 s em 1080p | 138 (prefira recortar no editor) |
+
+Ou seja: 20 frames custam 20 créditos, e um único filme de 30 s em 1080p custa 360. Itere na imagem e teste vídeo em 480p.
 
 **Checklist antes de apertar gerar:**
 
@@ -741,8 +882,17 @@ O curso não escreve prompt final à mão. Ele escreve **meta-prompts em portugu
 | Direção invertida (entrada vira saída) | Direção de movimento não definida | "Everyone moves into the station, toward the escalators; entry is frame-left" |
 | Mão com seis dedos ou derretendo | Mão sem regra | Linha "Hands" no prefixo + posição exata da mão |
 | Máquina ou roleta "alucina" | Física do mecanismo não descrita | Regra física: "arm stays locked; rotates only when pushed by the body, one third of a turn per person" |
+| Personagem real sai com rosto genérico na cena | Rosto pequeno no quadro, olhando para baixo, referências demais diluindo a identidade | Plano mais fechado (cintura para cima), rosto grande e em 3/4 para a câmera, fotos do rosto como as primeiras referências. Editar só o rosto depois não resolve: o Seedream preserva demais a imagem base |
+| Imagem com cara de IA ou de banco de imagem | Decisões seguras: plano médio na altura do peito, luz âmbar de bar, sujeito no centro, tudo limpo e bonito | Ângulo extremo, luz dura, styling com conceito, primeiro plano cortado pela borda, "do not beautify" (leis 13 e 14) |
+| Objeto pequeno errado num still já aprovado (ex.: desenho da tampinha) | Edição pelo modelo refaz a imagem inteira: acerta o objeto, mas embaralha letras e mexe em rótulo, rosto e fundo | Gerar uma folha do objeto a partir de foto real e **trocar por código**: apagar o antigo preenchendo com o fundo em volta, colar o novo com máscara, inclinação, luz e grão ajustados. Zero crédito, zero alucinação |
+| Tampinha (ou objeto de marca) gigante, fora de escala | O modelo aumenta o objeto de marca para caber o texto, e a descrição sem medida não segura escala | Escala em cm no prompt (tampinha 3,2 cm = metade do corpo de 6 cm da long neck, "never bigger than the bottle") e **medir em pixels** depois. Se o objeto certo sair grande, reduzir por código usando o próprio objeto renderizado. No vídeo, o previs em Blender com medidas reais trava a escala |
 | Tag não anexa a imagem | Nome diferente ou renomeado no upload | Conferir tag depois do upload; nomes únicos |
 | Música ou legenda aparecem sozinhas | Faltou o guarda-corpo de áudio | "No music, no narration, no subtitles" |
+| Texto embaralhado surge na camiseta lisa | A parte de baixo da roupa não aparece nas referências; quando a pessoa se afasta, o modelo inventa uma estampa | Dizer "completely plain, no print, no text, no logo anywhere on it" no figurino, ou cortar a borda na edição |
+| "Take único" sai com um corte seco escondido numa pausa (enquadramento pula, luz muda) | No Seedance 2.5, blocos com faixa de tempo ("0.3-1.0s: ...") são lidos como planos, e o corte cai na pausa da fala | Primeira linha do prompt "SINGLE CONTINUOUS SHOT... zero cuts", momentos escritos em prosa dentro do take ("On 'Hello' (0.75s)..."), trava de luz ("same exposure and white balance from the first frame to the last") |
+| Luz muda no meio do take (e às vezes vem junto um corte) | As referências têm exposição diferente do frame inicial (fotos tiradas de momentos diferentes do mesmo vídeo, com a câmera no automático). O modelo "pula" para a luz delas | Igualar a exposição das referências ao frame inicial antes de gerar: ganho e nível por canal ajustados no fundo (parede, cortina), sem IA. No prompt, dizer que a luz e a sala vêm só do frame inicial |
+| Olho arregalado numa fala | Direção de sobrancelha ("eyebrows lift") vira olho esbugalhado | "Eyes relaxed and natural, never widen, no raised eyebrows" |
+| Um gesto da referência se repete o clipe inteiro | O modelo copia a pose mais marcante das referências | "Vary the gestures, never hold the same hand shape for more than about 2 seconds"; tirar a referência que domina |
 
 ---
 
@@ -760,12 +910,37 @@ O curso não escreve prompt final à mão. Ele escreve **meta-prompts em portugu
 
 - Shotlist de 4 cenas de 15 s no formato da skill (Seedance 2.0), prefixo padrão.
 - Truques: telas de celular saem desfocadas e a interface real entra por cima na edição; o último plano deixa o terço de baixo livre para marca e preço.
+- TikTok 15 s (set/2026): prefixo de celular na mão no lugar do cinematográfico (iPhone, 26 mm, micro-tremor, sem gimbal, sem grade de cor, tela do celular sempre branca). Gancho em segunda pessoa ("POV: ...") para não virar depoimento falso; texto, tela real do app e música comercial entram na edição. Frame inicial gerado antes (imagem barata). Prefixo enxuto para caber nos 4.000 caracteres do Dreamina.
 
 ### 14.3 Exercício Human Academy (set/2026)
 
 - Selva urbana com a garota de street fashion. Ver [seção 11](#11-o-método-human-academy-lido-prompt-a-prompt) e a pasta [exemplos/](exemplos/).
 
-### 14.4 Referência externa: fones de ouvido da Higgsfield
+### 14.4 Character sheet do JP (set/2026)
+
+- Primeira geração pela CLI: folha modelo Higgsfield (close 85 mm + corpo inteiro frente e costas) com Seedream 5.0 Pro, 5 fotos reais como referência (frente neutra, frente sorrindo, 3/4, perfil, corpo), roupa padrão (camiseta branca, jeans escuro, tênis branco).
+- Segundo passo: edição apagando o rosto do corpo inteiro, passando o id do job anterior como `--image`. O resto da folha ficou idêntico.
+- Versão final (v3), que virou o formato padrão da seção 4.3: cabeças em 4 ângulos (v2) + corpos em 4 ângulos gerados inteiros e com a cabeça removida por código. A v2 pediu corpo "cortado no pescoço" e o modelo encurtou o tronco e esticou os braços.
+- Custo total: 10 créditos (4 gerações de 2,5). Arquivos em `Downloads/character-sheet-jp/`.
+- Aprendizado: a foto frontal neutra (tipo documento) é a que mais segura o rosto; a foto de corpo inteiro no espelho segura a proporção.
+
+### 14.5 Heineken Ultimate com o JP (set/2026, em andamento)
+
+- Pasta `Downloads/heineken-ultimate/` (estrutura do BORA) com `hf_gen.py`, um script que gera pela CLI, baixa o resultado e salva o preview.
+- Look no estilo dos prompts da Human Academy: "cinematic editorial photograph", camadas na ordem da seção 5.1, Kodak Portra 400 film grain, luz de tungstênio dos pendentes com rim, bounce verde da garrafa e um preenchimento azul da janela.
+- Folha de produto e packshot no GPT Image 2.5 (rótulo perfeito a partir de foto real). Locação no Seedream 5.0 Pro com a foto de clima do JP como referência de mood.
+- Frame com o JP: o plano médio olhando para baixo deu rosto genérico, e editar só o rosto não mudou nada. O plano da cintura para cima com o rosto grande em 3/4 funcionou no Seedream 5.0 Pro. O Nano Banana Pro, com o mesmo prompt, deu rosto mais genérico e bar com menos cara de filme.
+- **Teste de modelos com o mesmo prompt (estilo do curso):** character sheet e still herói (olho de peixe na laje, tampinha flutuando) no GPT Image 2.5, no Seedream 5.0 Pro 2K e no Seedream 5.0 Lite. **O GPT Image 2.5 venceu os dois**: layout mais próximo do curso, cara de foto real e o rosto mais parecido com o JP. O Seedream Pro ficou perto. O Lite fez grade estéril na sheet e duplicou a tampinha no still. Ponto de atenção do GPT: escreveu a marca real da caixa d'água (Fortlev); pedir "unbranded water tanks".
+- **Escolha do JP:** preferiu o **Seedream 5.0 Pro** no still herói, mesmo com o GPT à frente na minha avaliação. Vale o gosto do diretor: seguimos com Seedream Pro. Rascunhos em `--resolution 1.5k` (2048x1152, perto de 1080p, 1,25 crédito); 2K só no final.
+- **Tampinha:** eu tinha descrito a tampinha como dourada com estrela num círculo verde. A real (foto do JP) tem borda creme, anel verde com "Heineken" e "ULTIMATE" em creme, disco central creme com estrela vermelha e saia dourada. Virou o asset `@tampinha` (folha em `01_produto/tampinha_sheet_v1.png`), e o painel da folha de produto e o still herói foram corrigidos por código.
+- **Marca real por código (`compor_heroi.py`):** o JP reprovou a tampinha e o rótulo gerados ("alucinou, não tá seguindo o packshot"). A folha da tampinha gerada inventou a tipografia, e o rótulo no still herói estava embaralhado. A correção foi sem modelo: apagar a tampinha gerada, colar a foto real corrigida para luz do dia, trocar os rótulos do corpo e do gargalo pelos da foto frontal da garrafa com brilho e grão casados, e devolver os dedos por cima com máscara de pele (R>G>B, G/R<0,8, para não pegar o dourado do rótulo). A folha de produto perdeu o painel da tampinha gerada. Limite: a única foto da tampinha tem 116 px e fica macia ampliada. Para close da tampinha, fotografar uma real.
+- **Marca fiel gerada pelo Seedream Pro (a pedido do JP):** 4 variações em 2K. As "A" partiram da montagem com o produto real como imagem 1 e refizeram a foto: o "ULTIMATE" embaralhou de novo. As "B" foram geradas do zero com as fotos reais do produto como referência e o texto inteiro do rótulo e da tampinha no prompt. Nelas o modelo **aproximou a garrafa e a tampinha da lente**, e "Heineken", "ULTIMATE", a estrela e a tampinha saíram certos. Só a letra miúda do rodapé do rótulo ("SEM GLÚTEN", "30% MENOS CALORIAS") ainda embaralha. Regra: **marca grande no quadro + 2K + foto real como referência + texto do rótulo escrito no prompt + várias variações conferidas com zoom**.
+- **Escala, origem e olhar (still final `heroi_D2_final.png`):** o JP pediu a tampinha proporcional, saindo da garrafa que ele segura, e o olhar direto nela. No prompt: garrafa na altura do ombro, tampinha "12 cm acima da boca" com fio de vapor ligando as duas, "3,2 cm, pouco maior que a boca da garrafa, metade do corpo" e um bloco EYE-LINE. Das três variações, a D2 acertou a composição, o vapor e o olhar, mas no tamanho real **as letras da tampinha embaralham** (nas três). Receita híbrida: gerar a cena com a escala certa e **trocar só a tampinha** (`trocar_tampinha.py`) pela tampinha que o Seedream desenhou grande e certa na B2, reduzida para a largura medida (0,53 do corpo da garrafa, medido em pixels abaixo do rótulo). O recorte da tampinha separa o céu pela cor (azul > verde e > vermelho), senão leva junto o céu claro perto do sol.
+- **Locação:** a laje com casas de tijolo subindo o morro leu como "estética forçada de favela". Rio neutro que funcionou: cobertura de prédio residencial com parapeito branco, caixas d'água sem marca, prédios modernistas e os morros verdes ao fundo. Proibir no prompt: favela, casas no morro, tijolo aparente, varal, pipa, Cristo, Pão de Açúcar, praia, mar.
+- **Resultado reprovado pelo JP:** estética genérica de "cinematic commercial" (bar âmbar, plano médio, packshot brilhante), longe do editorial de moda do curso. Diagnóstico na [11.4](#114-o-que-os-resultados-do-curso-fazem-e-a-primeira-heineken-não-fez).
+- Na CLI do Windows, chamar o `hf.exe` direto (`%APPDATA%/npm/node_modules/@higgsfield/cli/vendor/hf.exe`) quando o comando vier de Python: o `higgsfield` do npm é um `.cmd`.
+
+### 14.6 Referência externa: fones de ouvido da Higgsfield
 
 - Comercial completo feito com o pipeline de 3 estágios (assets, framework de prompt, cenas). Origem das leis 2, 4, 5 e 6, do mapa esquemático, do body-rig e da tabela de FOV.
 - Texto e todos os prompts em [fontes/higgsfield-blog-cinematic-headphones.md](fontes/higgsfield-blog-cinematic-headphones.md).
@@ -810,11 +985,10 @@ O curso não escreve prompt final à mão. Ele escreve **meta-prompts em portugu
 
 ## 16. Em aberto (a validar)
 
-- **Seedance 2.5 na CLI**: o README mostra `--mode t2v`. O valor para imagem de partida (provavelmente `i2v`) e os limites exatos de referência precisam ser confirmados com `higgsfield model get seedance_2_5`.
-- **"Seedream 5.0 2K" do curso**: na CLI o modelo é `seedream_v5_lite`, com `--quality basic|high` e sem parâmetro de resolução. Confirmar se o "2K" é o `high` ou uma opção só da web.
 - **Seedance 2.5 no Dreamina**: ainda não testado. Limite de caracteres e sintaxe de tags podem mudar.
-- **Custo real** por segundo de Seedance 2.5 em 1080p nos planos do JP.
-- **Region edit**: testar o fluxo e anotar aqui.
+- **Region edit**: testar o fluxo e anotar aqui. Não aparece como modo na CLI; pode ser só da web.
+
+Resolvido em 2026-09-26: imagem de partida no Seedance 2.5 usa `--mode omni_reference`; o "Seedream 5.0 2K" é o `seedream_v5_lite --quality high` e aceita 21:9; custos na [seção 12](#12-economia-de-crédito-e-checklist-antes-de-gerar).
 
 ---
 
