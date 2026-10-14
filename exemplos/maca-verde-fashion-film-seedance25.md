@@ -63,21 +63,17 @@ POSITIVE LOCKS: Her identity and wardrobe identical to the start image in every 
 
 ## Comando
 
-Confira antes o esquema ao vivo do modelo (os parâmetros do Seedance 2.5 ainda não estão no MODELS.md da CLI):
+Imagem de partida no Seedance 2.5 exige `--mode omni_reference` (o `t2v` padrão não aceita mídia). Conferido com `higgsfield model get seedance_2_5` em 2026-09-26.
 
 ```bash
-higgsfield model get seedance_2_5
+higgsfield generate create seedance_2_5 --mode omni_reference --prompt "$(cat maca-verde.txt)" --start-image ./menina.png --aspect_ratio 9:16 --duration 30 --resolution 1080p --bitrate_mode high --wait
 ```
 
-Depois gere. Se o modelo pedir um `--mode` para imagem de partida, use o valor que o `model get` mostrar (o README só mostra `t2v`, para texto):
-
-```bash
-higgsfield generate create seedance_2_5 --prompt "$(cat maca-verde.txt)" --start-image ./menina.png --aspect_ratio 9:16 --duration 30 --resolution 1080p --bitrate_mode high --wait
-```
+Custo: **360 créditos** (12 por segundo em 1080p).
 
 ## Como economizar
 
-1. Rode primeiro uma versão de 10 s só com os planos 2 e 3 (o arremesso e a multiplicação). É o efeito mais difícil. Se ele funcionar, o resto funciona.
+1. Rode primeiro uma versão de 10 s em 480p só com os planos 2 e 3 (o arremesso e a multiplicação): 30 créditos. É o efeito mais difícil. Se ele funcionar, o resto funciona.
 2. Depois gere os 30 s completos.
 3. Se só um trecho errar (uma maçã com tamanho diferente, a mão no scroll), use o region edit em vez de refazer.
 4. Proporção: 9:16 porque é peça de rede social. Se a foto de partida for horizontal, troque para 16:9 e mude "lower third of the frame kept clean" conforme o espaço da marca.

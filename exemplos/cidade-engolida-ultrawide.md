@@ -38,7 +38,13 @@ Photorealistic, hyper-detailed, ultra-wide 21:9 panorama. No text, no readable s
 
 ## Onde gerar
 
-O Seedream V5 Lite não tem 21:9 na CLI. Opções:
+O Seedream 5.0 Lite (o do curso) aceita 21:9 e custa 1 crédito:
+
+```bash
+higgsfield generate create seedream_v5_lite --prompt "$(cat cidade.txt)" --aspect_ratio 21:9 --quality high --wait
+```
+
+Outras opções com 21:9:
 
 ```bash
 higgsfield generate create soul_location --prompt "$(cat cidade.txt)" --aspect_ratio 21:9 --wait
@@ -52,7 +58,7 @@ higgsfield generate create cinematic_studio_2_5 --prompt "$(cat cidade.txt)" --a
 higgsfield generate create seedream_v4_5 --prompt "$(cat cidade.txt)" --aspect_ratio 21:9 --quality high --wait
 ```
 
-Se quiser o mesmo look do Seedream 5, gere em 16:9 com `seedream_v5_lite` e estenda para os lados com `outpaint`.
+Para um panorama ainda mais largo que 21:9, estenda para os lados com `outpaint`.
 
 ## Variações úteis
 

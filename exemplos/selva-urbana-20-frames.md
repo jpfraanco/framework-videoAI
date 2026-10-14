@@ -181,6 +181,7 @@ mkdir -p out && for f in frames/f*.txt; do n=$(basename "$f" .txt); refs="--imag
 
 Notas:
 
-- "Seedream 5.0 2K" do curso = `seedream_v5_lite` com `--quality high` na CLI (confirmar com `higgsfield model get seedream_v5_lite`, ver [seção 16 do FRAMEWORK](../FRAMEWORK.md#16-em-aberto-a-validar)).
+- "Seedream 5.0 2K" do curso = `seedream_v5_lite --quality high` na CLI (conferido em 2026-09-26).
+- Custo: 1 crédito por frame, os 20 saem por 20 créditos.
 - Se um frame errar a personagem, não reescreva o prompt inteiro: confira se a referência foi junto e se o frame pede algo que a folha não mostra.
 - Para virar vídeo, cada frame é o **frame de partida** de um clipe, no ângulo do primeiro corte.
